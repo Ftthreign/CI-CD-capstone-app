@@ -42,7 +42,7 @@ jobs:
           echo "API_URL=${{ secrets.API_URL }}" >> local.properties
           echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> local.properties
           echo "GOOGLE_DIRECTION_API_KEY=${{ secrets.GOOGLE_DIRECTION_API_KEY }}" >> local.properties
-          echo "${{ secrets.GOOGLE_SERVICE }}" >> app/google-services.json 
+          echo "${{ secrets.GOOGLE_SERVICE }}" > app/google-services.json 
 
       # Build APK release version
       - name: Grant execute permission to gradlew
