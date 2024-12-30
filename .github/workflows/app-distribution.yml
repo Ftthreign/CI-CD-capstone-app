@@ -44,6 +44,8 @@ jobs:
           echo "GOOGLE_DIRECTION_API_KEY=${{ secrets.GOOGLE_DIRECTION_API_KEY }}" >> local.properties
 
       # Build APK release version
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
       - name: Build APK
         run: ./gradlew assembleRelease
 
