@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">LogiNest</string>
+    <string name="title_todo">ToDo</string>
+    <string name="title_done">Done</string>
+    <string name="title_profile">Profile</string>
+    <string name="logout">Log out</string>
+    <string name="name">Username</string>
+    <string name="route_title">Todo 1</string>
+    <string name="route_distance">12 km</string>
+    <string name="destination">Destination 1</string>
+    <string name="add_destination">Add Destination</string>
+    <string name="optimize_route">Optimize Route</string>
+    <string name="street">Street</string>
+    <string name="city">City</string>
+    <string name="province">Province</string>
+    <string name="postal_code">Postal Code</string>
+    <string name="kg">Kg</string>
+    <string name="submit">Submit</string>
+    <string name="done">Done</string>
+    <string name="title_login_page">Log In</string>
+    <string name="password">Password</string>
+    <string name="retype_password">Retype Password</string>
+    <string name="login">Login</string>
+    <string name="button_error">Please complete the data first</string>
+    <string name="title_welcome_page">Welcome!</string>
+    <string name="register">Register</string>
+    <string name="title_register_page">Complete your personal data below</string>
+    <string name="ad_title">Yeah!</string>
+    <string name="ad_title_error">Oh no ..</string>
+    <string name="ad_button">Continue</string>
+    <string name="pass_error">Password didn\'t match</string>
+    <string name="route_vehicles_form">Number of vehicles</string>
+    <string name="route_title_form">Title</string>
+    <string name="route_vehicle">Vehicle 1</string>
+    <string name="route_desc">… Street</string>
+    <string name="warning_message">The first Time input is the depot location</string>
+    <string name="Refresh">Refresh </string>
+    <string name="error">Error</string>
+    <string name="destination_data_warning">The destination data is empty, please add data.</string>
+
+<!--    Input Error -->
+    <string name="required_password_length_message">Password must be at least 8 Character</string>
+</resources>
