@@ -26,13 +26,13 @@ jobs:
           distribution: temurin
 
       # Setup Gradle cache
-      - name: Setup Gradle
+      - name: Cache for gradle
         uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -42,12 +42,14 @@ jobs:
           echo "API_URL=${{ secrets.API_URL }}" >> local.properties
           echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> local.properties
           echo "GOOGLE_DIRECTION_API_KEY=${{ secrets.GOOGLE_DIRECTION_API_KEY }}" >> local.properties
-          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > app/google-services.json 
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > app/google-services.json
           cat app/google-services.json
 
-      # Build APK release version
+      # Grant execute permission to gradlew
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
+
+      # Build APK release version
       - name: Build APK
         run: ./gradlew assembleRelease --stacktrace --info --scan
 
