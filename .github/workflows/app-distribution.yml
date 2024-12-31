@@ -74,7 +74,7 @@ jobs:
 
       # Check Output Release apk
       - name: Debug Output
-        run: ls -R app/build/output/apk
+        run: ls -R app/build/outputs/apk/release/app-release.apk
 
       # Deploy to Firebase App Distribution
       - name: Deploy to Firebase
