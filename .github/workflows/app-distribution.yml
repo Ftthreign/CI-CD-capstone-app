@@ -61,11 +61,18 @@ jobs:
       - name: Debug Output
         run: ls -R app/build/outputs/apk/debug/app-debug.apk
 
+      # Get latest commit message and send to Firebase release notes
+      - name: Get release notes
+        id: release_notes
+        run: |
+          echo "Release notes: ${{ github.event.head_commit.message }} >> $GITHUB_ENV
+
       # Deploy to Firebase App Distribution (debug version)
       - name: Deploy to Firebase (Debug)
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
-          token: ${{ secrets.FIREBASE_AUTH_TOKEN }}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: belajar-ci-cd
           file: app/build/outputs/apk/debug/app-debug.apk
+          releaseNotes: ${{ steps.release_notes.outputs.Release_Notes }}
