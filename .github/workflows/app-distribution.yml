@@ -55,7 +55,7 @@ jobs:
 
       # Build APK release version
       - name: Build APK
-        run: ./gradlew assembleDebug --stacktrace --info --scan
+        run: ./gradlew assembleRelease --stacktrace --info --scan
 
       # Deploy to Firebase App Distribution
       - name: Deploy to Firebase
