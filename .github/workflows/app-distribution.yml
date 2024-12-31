@@ -1,4 +1,4 @@
-name: Android CI/CD
+name: Android CI/CD (Debug)
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build and Deploy to Firebase
+    name: Build and Deploy Debug APK to Firebase
     runs-on: ubuntu-latest
 
     steps:
@@ -42,55 +42,30 @@ jobs:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: echo $DATA | base64 -di > app/google-services.json
 
-      # Create keystore.properties file with secrets
-      - name: Create keystore.properties
-        run: |
-          echo "SIGNING_KEYSTORE=release-key.jks" >> keystore.properties
-          echo "SIGNING_KEYSTORE_PASSWORD=${{ secrets.SIGNING_KEYSTORE_PASSWORD }}" >> keystore.properties
-          echo "SIGNING_KEY_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> keystore.properties
-          echo "SIGNING_KEY_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> keystore.properties
-
       # Create local.properties with secrets
       - name: Create local.properties with secrets
         run: |
           echo "API_URL=${{ secrets.API_URL }}" >> local.properties
           echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> local.properties
           echo "GOOGLE_DIRECTION_API_KEY=${{ secrets.GOOGLE_DIRECTION_API_KEY }}" >> local.properties
-          echo "SDK_DIR=/usr/lib/android-sdk" >> local.properties  # Menambahkan path SDK jika diperlukan
-
-      # Export environment variables from keystore.properties
-      - name: Set environment variables from keystore.properties
-        run: |
-          export SIGNING_KEYSTORE=$(grep 'SIGNING_KEYSTORE' keystore.properties | cut -d '=' -f2)
-          export SIGNING_KEYSTORE_PASSWORD=$(grep 'SIGNING_KEYSTORE_PASSWORD' keystore.properties | cut -d '=' -f2)
-          export SIGNING_KEY_ALIAS=$(grep 'SIGNING_KEY_ALIAS' keystore.properties | cut -d '=' -f2)
-          export SIGNING_KEY_PASSWORD=$(grep 'SIGNING_KEY_PASSWORD' keystore.properties | cut -d '=' -f2)
-        shell: bash
 
       # Grant execute permission to gradlew
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
 
-      # Build APK release version
-      - name: Build APK
-        run: ./gradlew assembleRelease --stacktrace --info
+      # Build APK debug version (without signing)
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace --info
 
-      # Sign APK using signing key
-      - name: Sign APK
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app
-        with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEYSTORE }}
-          alias: ${{ env.SIGNING_KEY_ALIAS }}
-          keyStorePassword: ${{ env.SIGNING_KEYSTORE_PASSWORD }}
-          keyPassword: ${{ env.SIGNING_KEY_PASSWORD }}
+      # Check Output Debug APK
+      - name: Debug Output
+        run: ls -R app/build/outputs/apk/debug/app-debug.apk
 
-      # Deploy to Firebase App Distribution
-      - name: Deploy to Firebase
+      # Deploy to Firebase App Distribution (debug version)
+      - name: Deploy to Firebase (Debug)
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
-          token: ${{ secrets.FIREBASE_AUTH_TOKEN }}
-          groups: testers
-          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          groups: belajar-ci-cd
+          file: app/build/outputs/apk/debug/app-debug.apk
