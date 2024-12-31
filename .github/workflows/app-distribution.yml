@@ -36,6 +36,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Install Android SDK and Build Tools
+        run: |
+          sudo apt update
+          sudo apt install -y android-sdk
+          yes | sdkmanager "platform-tools" "build-tools;29.0.3" "platforms;android-29"
+
       # Setup build tool version variable
       - name: Setup build tool version variable
         shell: bash
