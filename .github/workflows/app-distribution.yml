@@ -36,20 +36,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # Decode keystore
-      - name: Decode keystore
-        env:
-          SIGNING_KEYSTORE: ${{ secrets.SIGNING_KEYSTORE }}
-        run: | 
-          echo $SIGNING_KEYSTORE | base64 -di > CICDKeystore.jks
-
       # Load google-services.json
-      - name : Load Google Service file
+      - name: Load Google Service file
         env:
-          DATA : ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run : echo $DATA | base64 -di > app/google-services.json
+          DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo $DATA | base64 -di > app/google-services.json
 
-      # Create keystore data
+      # Create keystore.properties file with secrets
       - name: Create keystore.properties
         run: |
           echo "SIGNING_KEYSTORE=release-key.jks" >> keystore.properties
@@ -57,12 +50,14 @@ jobs:
           echo "SIGNING_KEY_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> keystore.properties
           echo "SIGNING_KEY_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> keystore.properties
 
-      # Create local.properties dynamically with secrets
-      - name: Create local.properties with secrets
+      # Export environment variables from keystore.properties
+      - name: Set environment variables from keystore.properties
         run: |
-          echo "API_URL=${{ secrets.API_URL }}" >> local.properties
-          echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> local.properties
-          echo "GOOGLE_DIRECTION_API_KEY=${{ secrets.GOOGLE_DIRECTION_API_KEY }}" >> local.properties
+          export SIGNING_KEYSTORE=$(grep 'SIGNING_KEYSTORE' keystore.properties | cut -d '=' -f2)
+          export SIGNING_KEYSTORE_PASSWORD=$(grep 'SIGNING_KEYSTORE_PASSWORD' keystore.properties | cut -d '=' -f2)
+          export SIGNING_KEY_ALIAS=$(grep 'SIGNING_KEY_ALIAS' keystore.properties | cut -d '=' -f2)
+          export SIGNING_KEY_PASSWORD=$(grep 'SIGNING_KEY_PASSWORD' keystore.properties | cut -d '=' -f2)
+        shell: bash
 
       # Grant execute permission to gradlew
       - name: Grant execute permission to gradlew
@@ -72,9 +67,16 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleRelease --stacktrace --info
 
-      # Check Output Release apk
-      - name: Debug Output
-        run: ls -R app/build/outputs/apk/release/app-release.apk
+      # Sign APK using signing key
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEYSTORE }}
+          alias: ${{ env.SIGNING_KEY_ALIAS }}
+          keyStorePassword: ${{ env.SIGNING_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ env.SIGNING_KEY_PASSWORD }}
 
       # Deploy to Firebase App Distribution
       - name: Deploy to Firebase
@@ -83,4 +85,4 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           token: ${{ secrets.FIREBASE_AUTH_TOKEN }}
           groups: testers
-          file: app/build/outputs/apk/release/app-release.apk
+          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
