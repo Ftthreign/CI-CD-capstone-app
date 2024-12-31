@@ -15,3 +15,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Signing Configuration
+CICDKeystore.jks
+keystore.base64
+keystore.properties

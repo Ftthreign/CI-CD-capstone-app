@@ -36,11 +36,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      # Decode keystore
+      - name: Decode keystore
+        env:
+          SIGNING_KEYSTORE: ${{ secrets.SIGNING_KEYSTORE }}
+        run: | 
+          echo $SIGNING_KEYSTORE | base64 -di > CICDKeystore.jks
+
       # Load google-services.json
       - name : Load Google Service file
         env:
           DATA : ${{ secrets.GOOGLE_SERVICES_JSON }}
         run : echo $DATA | base64 -di > app/google-services.json
+
+      # Create keystore data
+      - name: Create keystore.properties
+        run: |
+          echo "SIGNING_KEYSTORE=release-key.jks" >> keystore.properties
+          echo "SIGNING_KEYSTORE_PASSWORD=${{ secrets.SIGNING_KEYSTORE_PASSWORD }}" >> keystore.properties
+          echo "SIGNING_KEY_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> keystore.properties
+          echo "SIGNING_KEY_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> keystore.properties
 
       # Create local.properties dynamically with secrets
       - name: Create local.properties with secrets
@@ -55,13 +70,13 @@ jobs:
 
       # Build APK release version
       - name: Build APK
-        run: ./gradlew assembleRelease --stacktrace --info --scan
+        run: ./gradlew assembleRelease --stacktrace --info
 
       # Deploy to Firebase App Distribution
       - name: Deploy to Firebase
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          appId: your_firebase_app_id
+          appId: ${{ secrets.FIREBASE_APP_ID }}
           token: ${{ secrets.FIREBASE_AUTH_TOKEN }}
           groups: testers
           file: app/build/outputs/apk/release/app-release.apk
