@@ -36,14 +36,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      # Load google-services.json
+      - name : Load Google Service file
+        env:
+          DATA : ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run : echo $DATA | base64 -di > app/google-services.json
+
       # Create local.properties dynamically with secrets
       - name: Create local.properties with secrets
         run: |
           echo "API_URL=${{ secrets.API_URL }}" >> local.properties
           echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> local.properties
           echo "GOOGLE_DIRECTION_API_KEY=${{ secrets.GOOGLE_DIRECTION_API_KEY }}" >> local.properties
-          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > app/google-services.json
-          cat app/google-services.json
 
       # Grant execute permission to gradlew
       - name: Grant execute permission to gradlew
