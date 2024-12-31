@@ -65,7 +65,7 @@ jobs:
       - name: Get release notes
         id: release_notes
         run: |
-          echo "Release notes: ${{ github.event.head_commit.message }} >> $GITHUB_ENV
+          echo "::set-output name=Release_Notes::${{ github.event.head_commit.message }}
 
       # Deploy to Firebase App Distribution (debug version)
       - name: Deploy to Firebase (Debug)
