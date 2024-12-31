@@ -14,13 +14,13 @@ localProperties.load(FileInputStream("local.properties"))
 val googleDirectionApiKey : String = localProperties.getProperty("GOOGLE_DIRECTION_API_KEY")
 
 // Release Configuration Variable
-val keyStoreProperties = rootProject.file("keystore.properties")
-val keyStoreProperty = Properties()
-keyStoreProperty.load(keyStoreProperties.inputStream())
-val signingKeyAlias : String = keyStoreProperty.getProperty("SIGNING_KEY_ALIAS")
-val signingKeyPassword : String = keyStoreProperty.getProperty("SIGNING_KEY_PASSWORD")
-val signingKeyStore : String = keyStoreProperty.getProperty("SIGNING_KEYSTORE")
-val signingKeyStorePassword : String = keyStoreProperty.getProperty("SIGNING_KEYSTORE_PASSWORD")
+//val keyStoreProperties = rootProject.file("keystore.properties")
+//val keyStoreProperty = Properties()
+//keyStoreProperty.load(keyStoreProperties.inputStream())
+//val signingKeyAlias : String = keyStoreProperty.getProperty("SIGNING_KEY_ALIAS")
+//val signingKeyPassword : String = keyStoreProperty.getProperty("SIGNING_KEY_PASSWORD")
+//val signingKeyStore : String = keyStoreProperty.getProperty("SIGNING_KEYSTORE")
+//val signingKeyStorePassword : String = keyStoreProperty.getProperty("SIGNING_KEYSTORE_PASSWORD")
 
 android {
     namespace = "com.ftthreign.loginest"
@@ -37,14 +37,14 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        create("release") {
-            keyAlias = signingKeyAlias
-            keyPassword = signingKeyPassword
-            storeFile = file(signingKeyStore)
-            storePassword = signingKeyStorePassword
-        }
-    }
+//    signingConfigs {
+//        create("release") {
+//            keyAlias = signingKeyAlias
+//            keyPassword = signingKeyPassword
+//            storeFile = file(signingKeyStore)
+//            storePassword = signingKeyStorePassword
+//        }
+//    }
 
     buildTypes {
         getByName("release") {
