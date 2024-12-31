@@ -72,6 +72,10 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleRelease --stacktrace --info
 
+      # Check Output Release apk
+      - name: Debug Output
+        run: ls -R app/build/output/apk
+
       # Deploy to Firebase App Distribution
       - name: Deploy to Firebase
         uses: wzieba/Firebase-Distribution-Github-Action@v1
