@@ -50,6 +50,14 @@ jobs:
           echo "SIGNING_KEY_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> keystore.properties
           echo "SIGNING_KEY_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> keystore.properties
 
+      # Create local.properties with secrets
+      - name: Create local.properties with secrets
+        run: |
+          echo "API_URL=${{ secrets.API_URL }}" >> local.properties
+          echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> local.properties
+          echo "GOOGLE_DIRECTION_API_KEY=${{ secrets.GOOGLE_DIRECTION_API_KEY }}" >> local.properties
+          echo "SDK_DIR=/usr/lib/android-sdk" >> local.properties  # Menambahkan path SDK jika diperlukan
+
       # Export environment variables from keystore.properties
       - name: Set environment variables from keystore.properties
         run: |
