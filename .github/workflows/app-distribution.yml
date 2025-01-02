@@ -4,9 +4,15 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'app/**'
+      - '**/*.gradle.kts'
   pull_request:
     branches:
       - master
+    paths:
+      - 'app/**'
+      - '**/*.gradle.kts'
 
 jobs:
   build:
